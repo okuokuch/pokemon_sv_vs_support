@@ -15,6 +15,22 @@ const SELECTED_TEAM_ID_COLUMN_NUMBER = 2;
 
 
 /**
+ * アクティブセルがチームID記入セルであれば、分析を実行する。トリガ設定をして使用する。
+ */
+function checkVSAnalyticsSheetTeamID(){
+  let sheet = SpreadsheetApp.getActiveSheet();
+  let cell = sheet.getActiveCell();
+
+  if (
+    sheet.getSheetName() == SHEETNAME_VS_ANALYTICS 
+    && cell.getRow() == SELECTED_TEAM_ID_ROW_NUMBER
+    && cell.getColumn() == SELECTED_TEAM_ID_COLUMN_NUMBER
+  ){
+    analyzeVSEnemyLog();
+  }
+}
+
+/**
  * logシートからデータを取得分析し、対戦分析に出力する。
  */
 function analyzeVSEnemyLog(){
@@ -26,11 +42,12 @@ function analyzeVSEnemyLog(){
   //チームIDでの絞り込み処理
   let teamID = sheetOutput.getRange(SELECTED_TEAM_ID_ROW_NUMBER, SELECTED_TEAM_ID_COLUMN_NUMBER).getValue();
   if(teamID == ""){
-    //indexを削除
+    //teamIDが空欄か0だった場合、indexのみ削除。
     data = data.slice(1);
   }
   else{
     //チームIDで絞込
+    Logger.log(teamID)
     data = extractTeamData(data, teamID, TEAM_ID_COMULMN);
   }
   //各分析範囲ごとにデータを分割
