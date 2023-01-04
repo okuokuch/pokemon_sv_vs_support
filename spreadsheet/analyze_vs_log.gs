@@ -24,14 +24,14 @@ function analyzeVSEnemyLog(){
   //データの取得
   let data = fetchDataArray(sheetLog);
   //チームIDでの絞り込み処理
-  let teamID = sheetOutput.getRange(SELECTED_TEAM_ID_ROW_NUMBER, SELECTED_TEAM_ID_COLUMN_NUMBER).getValue()
+  let teamID = sheetOutput.getRange(SELECTED_TEAM_ID_ROW_NUMBER, SELECTED_TEAM_ID_COLUMN_NUMBER).getValue();
   if(teamID == ""){
     //indexを削除
-    data = data.slice(1)
+    data = data.slice(1);
   }
   else{
     //チームIDで絞込
-    data = extractTeamData(data, teamID, TEAM_ID_COMULMN)
+    data = extractTeamData(data, teamID, TEAM_ID_COMULMN);
   }
   //各分析範囲ごとにデータを分割
   let enemyPokemon = extractDataArray(data, ENEMY_POKEMON_COLOMN_START, ENEMY_POKEMON_COLOMN_END, 0);
