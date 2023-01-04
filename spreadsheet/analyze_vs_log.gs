@@ -8,16 +8,35 @@ const ENEMY_POKEMON_COLOMN_END = 7;
 const ENEMY_SELECTED_POKEMON_COLOMN_START = 8;
 const ENEMY_SELECTED_POKEMON_COLOMN_END = 10;
 const WIN_COLUMN = 15;
+const TEAM_ID_COMULMN = 11;
 const AGGREGATION_COLUMN_NUMBER = 7;//outputObjectの列数
+const SELECTED_TEAM_ID_ROW_NUMBER = 1;
+const SELECTED_TEAM_ID_COLUMN_NUMBER = 2;
 
 
+/**
+ * logシートからデータを取得分析し、対戦分析に出力する。
+ */
 function analyzeVSEnemyLog(){
+  //シートの定義
   let sheetLog = SPREADSHEET.getSheetByName(SHEETNAME_LOG);
   let sheetOutput = SPREADSHEET.getSheetByName(SHEETNAME_VS_ANALYTICS);
+  //データの取得
   let data = fetchDataArray(sheetLog);
-  let enemyPokemon = extractDataArray(data, ENEMY_POKEMON_COLOMN_START, ENEMY_POKEMON_COLOMN_END, 1);
-  let selectedPokemon = extractDataArray(data, ENEMY_SELECTED_POKEMON_COLOMN_START, ENEMY_SELECTED_POKEMON_COLOMN_END, 1);
-  let firstPokemon = extractDataArray(data, ENEMY_SELECTED_POKEMON_COLOMN_START, ENEMY_SELECTED_POKEMON_COLOMN_START, 1);
+  //チームIDでの絞り込み処理
+  let teamID = sheetOutput.getRange(SELECTED_TEAM_ID_ROW_NUMBER, SELECTED_TEAM_ID_COLUMN_NUMBER).getValue()
+  if(teamID == ""){
+    //indexを削除
+    data = data.slice(1)
+  }
+  else{
+    //チームIDで絞込
+    data = extractTeamData(data, teamID, TEAM_ID_COMULMN)
+  }
+  //各分析範囲ごとにデータを分割
+  let enemyPokemon = extractDataArray(data, ENEMY_POKEMON_COLOMN_START, ENEMY_POKEMON_COLOMN_END, 0);
+  let selectedPokemon = extractDataArray(data, ENEMY_SELECTED_POKEMON_COLOMN_START, ENEMY_SELECTED_POKEMON_COLOMN_END, 0);
+  let firstPokemon = extractDataArray(data, ENEMY_SELECTED_POKEMON_COLOMN_START, ENEMY_SELECTED_POKEMON_COLOMN_START, 0);
   let uniquePokemon = makeUniquePokemonData(enemyPokemon);
   let outputObject = [];//この中に1行の集計結果を格納する。
 
@@ -129,4 +148,17 @@ function countWin(
     }
   }
   return wins
+}
+
+
+/**
+ * 特定のチームIDの行のみ抽出する。
+ * 
+ * @param {Object} array
+ * @param {number} teamID - フィルタするチームID
+ * @param {number} teamColumnNumber - チームIDが記入されるカラム番号
+ */
+function extractTeamData(array, teamID, teamColumnNumber){
+  let data = array.filter(i => i[teamColumnNumber]==teamID);
+  return data
 }
