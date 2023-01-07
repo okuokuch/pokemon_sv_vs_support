@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, scrolledtext 
 
 class Application(ttk.Frame):
     """ポケモン対戦画面を画像認識してスプレッドシートに出力するアプリのGUI"""
@@ -18,7 +18,27 @@ class Application(ttk.Frame):
         self.create_widget()
 
     def create_widget(self):
-        pass
+        #Frameの定義
+        self.upper_notebook = ttk.Notebook(self.master)
+        self.lower_frame = ttk.Frame(self.master)
+        self.tab1 = ttk.Frame(self.upper_notebook)
+        self.tab2 = ttk.Frame(self.upper_notebook)
+        self.log_area = scrolledtext.ScrolledText(self.lower_frame)
+
+        #Labelの定義
+        self.label_obs = ttk.Label(self.tab1, text='OBS設定')
+
+        self.upper_notebook.add(self.tab1, text='基本設定')
+        self.upper_notebook.add(self.tab2, text='自分ポケモン')
+
+        self.upper_notebook.grid(column=0, row=0, sticky=W+N)
+        self.lower_frame.grid(column=0, row=1, sticky=W)
+        self.label_obs.grid(column=0, row=0)
+        self.log_area.grid(column=0, row=0)
+
+        #重み付け
+        self.master.rowconfigure(0, weight=2)
+        self.master.rowconfigure(1, weight=1)
 
 if __name__ == '__main__':
     root = Tk()
