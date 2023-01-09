@@ -31,4 +31,4 @@ class OBS:
         self.ws.save_source_screenshot(scene_name, img_format, file_path, width, height, -1)
 
 if __name__ == '__main__':
-    test = OBS(4455, 'obwgzSCmFWzpaJaq3')
+    test = OBS(4455, 'obwgzSCmFWzpaJaq')
