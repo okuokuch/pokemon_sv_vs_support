@@ -207,6 +207,7 @@ def main():
     ws = OBS(PORT, PASSWORD)
     path = os.getcwd()
     img_path = '{}/pokemon_sv_vs_support/python/screen.png'.format(path)
+    print(img_path)
     is_turned_on = True
     phase = 0
     """phaseの定義
@@ -224,12 +225,12 @@ def main():
 
     while is_turned_on:
         #OBSでスクショを取る。
-        ws.take_screenshot(SCENE, img_path)
+        ws.take_screenshot(SCENE, img_path, width=1280, height=720)
 
         img = cv2.imread(img_path)
         phase = update_phase(img, phase, spreadsheet)
 
 
 if __name__ == '__main__':
-
+    print('起動しました。')
     main()
