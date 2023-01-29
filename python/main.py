@@ -24,6 +24,7 @@ DX = 'width'
 Y = 'top'
 DY = 'height'
 
+# 画像認識の範囲を外部ファイルで設定できるようにするため、iniファイルを利用。
 TRIM_PLACE = {
     1:{
         'x':int(config[PHASE_1][X]),
@@ -77,6 +78,7 @@ IMG_LOSE = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/lose.png')
 POKE_PING_FILES = glob.glob('./pokemon_sv_vs_support/python/asset/poke_png/*.png')
 ID = pd.read_csv('./pokemon_sv_vs_support/python/asset/poke_id.csv')
 
+# スプレッドシートの構造を変化させた場合は、ここを編集する。
 VS_TIMESTAMP_COLUMN = 1
 VS_ID_COLUMN = 2
 ENEMY_TEAM_LAST_COLUMN = 8
@@ -84,10 +86,13 @@ MY_TEAM_COLUMN = 12
 WIN_LOOSE_COLUMN = 16
 
 def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
+    """画像認識を用いてフェーズを判定、処理を実行しフェーズを更新する。"""
+
+    # main.pyの中で、引き継ぎたい変数。
     global vs_id
     global row_number
 
-    """フェーズごとの処理を行い、フェーズを更新する。"""
+    
     if phase == 0 or phase == 1:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
         if recog.is_matched(img, IMG_MATCHING, 0.8):
@@ -97,7 +102,7 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
     elif phase == 2:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
         if recog.is_matched(img, IMG_FOUND_ENEMY, 0.8):
-            #順位認識を行う。
+            #【今後修正】順位認識を行う。
             print('対戦相手が見つかりました。')
             vs_id = len(spreadsheet.get_col_values(1))
             row_number = vs_id + 1
@@ -107,7 +112,7 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         img_team = recog.trim(img, TRIM_PLACE['selecting_enemy_team']['x'], TRIM_PLACE['selecting_enemy_team']['dx'], TRIM_PLACE['selecting_enemy_team']['y'], TRIM_PLACE['selecting_enemy_team']['dy'])
         img = recog.trim(img, TRIM_PLACE[2]['x'], TRIM_PLACE[2]['dx'], TRIM_PLACE[2]['y'], TRIM_PLACE[2]['dy'])
         if recog.is_matched(img, IMG_SELECTING, 0.8):
-            #ポケモン認識処理を行う
+            # ポケモン認識処理を行う
             pokemons = recog_enemy_pokemons(img_team)
             print('相手ポケモンを認識しました。{}'.format(pokemons))
             values = [vs_id]
@@ -137,16 +142,14 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         return phase
     elif phase == 5:
         img = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
-        if recog.is_matched(img, IMG_WIN, 0.75):
-            #勝利時処理
+        if recog.is_matched(img, IMG_WIN, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
             print('勝利しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
             spreadsheet.write_values(cell_list)
             print('勝敗をスプレッドシートに書き込みました。')
             return 1
-        elif recog.is_matched(img, IMG_LOSE, 0.75):
-            #敗北時処理
+        elif recog.is_matched(img, IMG_LOSE, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
             print('敗北しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
@@ -191,7 +194,7 @@ def recog_enemy_pokemons(img_selecting:np.ndarray)->list[str,str,str,str,str,str
         ポケモン名を含んだリスト
     """
     pokemons = []
-    #1~6体目を順番に認識しpokemonsに出力する。
+    # 1~6体目を順番に認識しpokemonsに出力する。
     place = TRIM_PLACE['pokemon']
     for i in range(6):
         img_poke = recog.trim(img_selecting, place['x'], place['dx'], place['y']+(place['dy']+1)*i, place['dy'])
@@ -224,7 +227,7 @@ def main():
     spreadsheet.set_worksheet(config['spreadsheet']['log_sheet'])
 
     while is_turned_on:
-        #OBSでスクショを取る。
+        # OBSでスクショを取る。
         ws.take_screenshot(SCENE, img_path, width=1280, height=720)
 
         img = cv2.imread(img_path)
