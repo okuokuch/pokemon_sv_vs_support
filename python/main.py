@@ -66,7 +66,7 @@ TRIM_PLACE = {
 
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
-SCENE = config['obs']['scene']
+SOURCE = config['obs']['source']
 
 IMG_BATTLING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/battling.png')
 IMG_MATCHING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/matching.png')
@@ -210,7 +210,7 @@ def main():
     ws = OBS(PORT, PASSWORD)
     path = os.getcwd()
     img_path = '{}/pokemon_sv_vs_support/python/screen.png'.format(path)
-    print(img_path)
+    print('{}に保存します。'.format(img_path))
     is_turned_on = True
     phase = 0
     """phaseの定義
@@ -225,10 +225,11 @@ def main():
 
     spreadsheet = SpreadSheet(config['spreadsheet']['book'])
     spreadsheet.set_worksheet(config['spreadsheet']['log_sheet'])
+    print('出力するスプレッドシートを認識しました。')
 
     while is_turned_on:
         # OBSでスクショを取る。
-        ws.take_screenshot(SCENE, img_path, width=1280, height=720)
+        ws.take_screenshot(SOURCE, img_path, width=1280, height=720)
 
         img = cv2.imread(img_path)
         phase = update_phase(img, phase, spreadsheet)
