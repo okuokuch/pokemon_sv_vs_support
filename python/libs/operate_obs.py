@@ -18,7 +18,7 @@ class OBS:
             print(e)
             print('portかパスワードを確認してください。')
 
-    def take_screenshot(self, scene_name:str, file_path:str, img_format:str = 'png', width:int = None, height:int = None)->None:
+    def take_screenshot(self, source_name:str, file_path:str, img_format:str = 'png', width:int = None, height:int = None)->None:
         """指定したシーンのスクショを保存する。
 
         param:
@@ -28,7 +28,7 @@ class OBS:
             width:保存する画像サイズの幅。未記入の場合、OBSで設定している幅となる。
             height:保存する画像サイズの高さ。未記入の場合、OBSで設定している高さとなる。
         """
-        self.ws.save_source_screenshot(scene_name, img_format, file_path, width, height, -1)
+        self.ws.save_source_screenshot(source_name, img_format, file_path, width, height, -1)
 
 if __name__ == '__main__':
     test = OBS(4455, 'obwgzSCmFWzpaJaq')

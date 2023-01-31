@@ -8,11 +8,16 @@ import glob
 import os
 import pandas as pd
 import datetime
+import logging
+import logging.config
 
 recog = ImageRecognition()
 
 config = configparser.ConfigParser()
 config.read('./pokemon_sv_vs_support/python/asset/setting.ini', encoding='utf-8')
+
+logging.config.fileConfig('./pokemon_sv_vs_support/python/asset/logging.ini')
+logger_stream = logging.getLogger('stream')
 PHASE_1 = 'matching'
 PHASE_2 = 'selecting'
 PHASE_3 = 'vs'
@@ -66,7 +71,7 @@ TRIM_PLACE = {
 
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
-SCENE = config['obs']['scene']
+SOURCE = config['obs']['source']
 
 IMG_BATTLING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/battling.png')
 IMG_MATCHING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/matching.png')
@@ -96,14 +101,14 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
     if phase == 0 or phase == 1:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
         if recog.is_matched(img, IMG_MATCHING, 0.8):
-            print('対戦相手検索中です。')
+            logger_stream.debug('対戦相手検索中です。')
             return 2
         return phase
     elif phase == 2:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
         if recog.is_matched(img, IMG_FOUND_ENEMY, 0.8):
             #【今後修正】順位認識を行う。
-            print('対戦相手が見つかりました。')
+            logger_stream.debug('対戦相手が見つかりました。')
             vs_id = len(spreadsheet.get_col_values(1))
             row_number = vs_id + 1
             return 3
@@ -114,47 +119,47 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         if recog.is_matched(img, IMG_SELECTING, 0.8):
             # ポケモン認識処理を行う
             pokemons = recog_enemy_pokemons(img_team)
-            print('相手ポケモンを認識しました。{}'.format(pokemons))
+            logger_stream.debug('相手ポケモンを認識しました。{}'.format(pokemons))
             values = [vs_id]
             values.extend(pokemons)
             cell_list = spreadsheet.set_range(row_number, VS_ID_COLUMN, row_number, ENEMY_TEAM_LAST_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, values)
             spreadsheet.write_values(cell_list)
-            print('対戦ID、ポケモン名をスプレッドシートに書き込みました。')
+            logger_stream.debug('対戦ID、ポケモン名をスプレッドシートに書き込みました。')
             config.read('./pokemon_sv_vs_support/python/asset/setting.ini', encoding='utf-8')
             cell_list = spreadsheet.set_range(row_number, MY_TEAM_COLUMN, row_number, MY_TEAM_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, [config['my_team']['id']])
             spreadsheet.write_values(cell_list)
-            print('自分チームIDをスプレッドシートに書き込みました。')
+            logger_stream.debug('自分チームIDをスプレッドシートに書き込みました。')
             return 4
         return phase
     elif phase == 4:
         img = recog.trim(img, TRIM_PLACE[3]['x'], TRIM_PLACE[3]['dx'], TRIM_PLACE[3]['y'], TRIM_PLACE[3]['dy'])
         if recog.is_matched(img, IMG_BATTLING, 0.8):
             #時間測定開始する。
-            print('対戦を開始しました。')
+            logger_stream.debug('対戦を開始しました。')
             now = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
             cell_list = spreadsheet.set_range(row_number, VS_TIMESTAMP_COLUMN, row_number, VS_TIMESTAMP_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, [now])
             spreadsheet.write_values(cell_list)
-            print('対戦開始日時をスプレッドシートに書き込みました。')    
+            logger_stream.debug('対戦開始日時をスプレッドシートに書き込みました。')    
             return 5
         return phase
     elif phase == 5:
         img = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
         if recog.is_matched(img, IMG_WIN, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
-            print('勝利しました。')
+            logger_stream.debug('勝利しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
             spreadsheet.write_values(cell_list)
-            print('勝敗をスプレッドシートに書き込みました。')
+            logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
         elif recog.is_matched(img, IMG_LOSE, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
-            print('敗北しました。')
+            logger_stream.debug('敗北しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
             spreadsheet.write_values(cell_list)
-            print('勝敗をスプレッドシートに書き込みました。')
+            logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
         return phase
 
@@ -210,7 +215,7 @@ def main():
     ws = OBS(PORT, PASSWORD)
     path = os.getcwd()
     img_path = '{}/pokemon_sv_vs_support/python/screen.png'.format(path)
-    print(img_path)
+    logger_stream.info('{}に保存します。'.format(img_path))
     is_turned_on = True
     phase = 0
     """phaseの定義
@@ -225,15 +230,19 @@ def main():
 
     spreadsheet = SpreadSheet(config['spreadsheet']['book'])
     spreadsheet.set_worksheet(config['spreadsheet']['log_sheet'])
+    logger_stream.debug('出力するスプレッドシートを認識しました。')
 
     while is_turned_on:
         # OBSでスクショを取る。
-        ws.take_screenshot(SCENE, img_path, width=1280, height=720)
+        ws.take_screenshot(SOURCE, img_path, width=1280, height=720)
 
         img = cv2.imread(img_path)
         phase = update_phase(img, phase, spreadsheet)
 
 
 if __name__ == '__main__':
-    print('起動しました。')
-    main()
+    logger_stream.debug('起動しました。')
+    try:
+        main()
+    except:
+        logger_stream.exception('エラーが発生しました。')
