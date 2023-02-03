@@ -69,6 +69,8 @@ TRIM_PLACE = {
     }
 }
 
+WIN_LOSE_THRESHOLD = config['threshold']['win_lose']
+
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
 SOURCE = config['obs']['source']
@@ -147,14 +149,14 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         return phase
     elif phase == 5:
         img = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
-        if recog.is_matched(img, IMG_WIN, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
+        if recog.is_matched(img, IMG_WIN, WIN_LOSE_THRESHOLD):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('勝利しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
             spreadsheet.write_values(cell_list)
             logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
-        elif recog.is_matched(img, IMG_LOSE, 0.75):  # 背景の変化が大きいため、閾値を低めに設定。
+        elif recog.is_matched(img, IMG_LOSE, WIN_LOSE_THRESHOLD):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('敗北しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
