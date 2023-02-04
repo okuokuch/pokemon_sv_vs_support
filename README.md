@@ -14,6 +14,7 @@ https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/
 ## License
 本体
 - 同梱のLICENSEファイルを参照
+
 使用ライブラリ
 - opencv: BSD 3-Clause "New" or "Revised" License
 https://opencv.org/license/
