@@ -4,23 +4,27 @@
 https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
 
 ## Q&A
-1.以下を参照してQ&Aを参照してください
+1.以下を参照して既存のQ&Aを参照してください
 https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A701_Q%26A
 2.問題が解決しない場合、issueを起票してください
-
+起票する際には以下の【】を先頭に記述してください。
+【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
 ## 開発予定機能
 近日更新予定
 
 ## リポジトリ概要
 スプレッドシートでポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
+
 ここでは
 - 開発タスクの管理
 - コードの共有
 - プログラムの配布
 - 質問の受付
+
 を行っています。
 ## 開発者メンバー紹介
 おくおく（GitHubID/twitterID?）
+
 しゅみる（GitHubID/twitterID?）
 
 ## License
