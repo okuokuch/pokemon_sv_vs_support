@@ -15,6 +15,8 @@ https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A70
 
 【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
 
+701_Q&Aのラベルは、回答者が付与しますので、対応不要です。
+
 以下、issueのコメント部へコピペして記載してください。
 ```
 ### 概要
