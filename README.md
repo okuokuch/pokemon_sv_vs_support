@@ -15,7 +15,7 @@ https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A70
 
 【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
 
-以下、コメント部へコピペして記載してください。
+以下、issueのコメント部へコピペして記載してください。
 ```
 ### 概要
 ここに1~3行程度にまとめた用件を書いてください。
