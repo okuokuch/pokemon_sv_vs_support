@@ -1,13 +1,18 @@
 # pokemon_sv_vs_support
 ## 開発ツール紹介・導入方法・使用方法
 以下のドキュメントにまとめています。
+
 https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
 
 ## Q&A
 1.以下を参照して既存のQ&Aを参照してください
+
 https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A701_Q%26A
+
 2.問題が解決しない場合、issueを起票してください
-起票する際には以下の【】を先頭に記述してください。
+
+起票する際には以下のいずれかの【○○】を先頭に記述してください。
+
 【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
 ## 開発予定機能
 近日更新予定
@@ -34,12 +39,17 @@ https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A70
 
 使用ライブラリ
 - opencv: BSD 3-Clause "New" or "Revised" License
+
 https://opencv.org/license/
 - gspread:MIT
+
 https://github.com/burnash/gspread/blob/master/LICENSE.txt
 - oauth2client:Apatch License 2
+
 https://github.com/googleapis/oauth2client/blob/master/LICENSE
 - pandas: BSD 3-Clause "New" or "Revised" License
+
 https://github.com/pandas-dev/pandas/blob/main/LICENSE
 - numpy: BSD 3-Clause "New" or "Revised" License
+
 https://numpy.org/doc/stable/license.html
