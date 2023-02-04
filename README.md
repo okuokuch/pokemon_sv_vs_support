@@ -1,5 +1,5 @@
 # pokemon_sv_vs_support
-## 開発ツール紹介・導入方法・使用方法
+## 開発ツール紹介・導入方法・利用方法
 以下のドキュメントにまとめています。
 
 https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
