@@ -34,7 +34,7 @@ https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A70
 発生事象を開発者へ共有するためのスクリーンショットや、
 app.logに出力された実行ログのコピペなどを添付してください。
 ```
-3.問題が解決した場合は、クローズしてください。
+3.問題が解決した場合は、issueをクローズしてください。
 
 ## 開発予定機能
 近日更新予定
