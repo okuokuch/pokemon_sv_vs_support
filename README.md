@@ -1,19 +1,32 @@
 # pokemon_sv_vs_support
-## 概要
-スプレッドシートで、ポケモン対戦の補助をするためのツールを作成するためのリポジトリです
-- タスクの管理
+## 開発ツール紹介・導入方法・使用方法
+以下のドキュメントにまとめています。
+https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
+
+## Q&A
+1.以下を参照してQ&Aを参照してください
+https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A701_Q%26A
+2.問題が解決しない場合、issueを起票してください
+
+## 開発予定機能
+近日更新予定
+
+## リポジトリ概要
+スプレッドシートでポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
+ここでは
+- 開発タスクの管理
 - コードの共有
 - プログラムの配布
 - 質問の受付
 を行っています。
-## 利用方法
-対戦補助スプレッドシートの利用方法は、以下ドキュメントにまとめています。
-https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
 ## 開発者メンバー紹介
-以下ページに、スキルセットや意気込みなど記載。
+おくおく（GitHubID/twitterID?）
+しゅみる（GitHubID/twitterID?）
+
 ## License
 本体
-- 同梱のLICENSEファイルを参照
+- GPL-3.0 license
+同梱のLICENSEファイルを参照
 
 使用ライブラリ
 - opencv: BSD 3-Clause "New" or "Revised" License
