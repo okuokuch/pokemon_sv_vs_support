@@ -69,16 +69,21 @@ TRIM_PLACE = {
     }
 }
 
-WIN_LOSE_THRESHOLD = config['threshold']['win_lose']
+THRESHOLD_MATCHING = config['threshold']['matching']
+THRESHOLD_FOUND_ENEMY = config['threshold']['found_enemy']
+THRESHOLD_SELECTING = config['threshold']['selecting']
+THRESHOLD_BATTLING = config['threshold']['battling']
+THRESHOLD_WIN = config['threshold']['win']
+THRESHOLD_LOSE = config['threshold']['lose']
 
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
 SOURCE = config['obs']['source']
 
-IMG_BATTLING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/battling.png')
 IMG_MATCHING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/matching.png')
 IMG_FOUND_ENEMY = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/found_enemy.png')
 IMG_SELECTING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/selecting.png')
+IMG_BATTLING = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/battling.png')
 IMG_WIN = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/win.png')
 IMG_LOSE = cv2.imread('./pokemon_sv_vs_support/python/asset/temp_png/lose.png')
 
@@ -102,13 +107,13 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
     
     if phase == 0 or phase == 1:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
-        if recog.is_matched(img, IMG_MATCHING, 0.8):
+        if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
             logger_stream.debug('対戦相手検索中です。')
             return 2
         return phase
     elif phase == 2:
         img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
-        if recog.is_matched(img, IMG_FOUND_ENEMY, 0.8):
+        if recog.is_matched(img, IMG_FOUND_ENEMY, THRESHOLD_FOUND_ENEMY):
             #【今後修正】順位認識を行う。
             logger_stream.debug('対戦相手が見つかりました。')
             vs_id = len(spreadsheet.get_col_values(1))
@@ -118,7 +123,7 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
     elif phase == 3:
         img_team = recog.trim(img, TRIM_PLACE['selecting_enemy_team']['x'], TRIM_PLACE['selecting_enemy_team']['dx'], TRIM_PLACE['selecting_enemy_team']['y'], TRIM_PLACE['selecting_enemy_team']['dy'])
         img = recog.trim(img, TRIM_PLACE[2]['x'], TRIM_PLACE[2]['dx'], TRIM_PLACE[2]['y'], TRIM_PLACE[2]['dy'])
-        if recog.is_matched(img, IMG_SELECTING, 0.8):
+        if recog.is_matched(img, IMG_SELECTING, THRESHOLD_SELECTING):
             # ポケモン認識処理を行う
             pokemons = recog_enemy_pokemons(img_team)
             logger_stream.debug('相手ポケモンを認識しました。{}'.format(pokemons))
@@ -137,7 +142,7 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         return phase
     elif phase == 4:
         img = recog.trim(img, TRIM_PLACE[3]['x'], TRIM_PLACE[3]['dx'], TRIM_PLACE[3]['y'], TRIM_PLACE[3]['dy'])
-        if recog.is_matched(img, IMG_BATTLING, 0.8):
+        if recog.is_matched(img, IMG_BATTLING, THRESHOLD_BATTLING):
             #時間測定開始する。
             logger_stream.debug('対戦を開始しました。')
             now = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
@@ -149,14 +154,14 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
         return phase
     elif phase == 5:
         img = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
-        if recog.is_matched(img, IMG_WIN, WIN_LOSE_THRESHOLD):  # 背景の変化が大きいため、閾値を低めに設定。
+        if recog.is_matched(img, IMG_WIN, THRESHOLD_WIN):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('勝利しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
             spreadsheet.write_values(cell_list)
             logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
-        elif recog.is_matched(img, IMG_LOSE, WIN_LOSE_THRESHOLD):  # 背景の変化が大きいため、閾値を低めに設定。
+        elif recog.is_matched(img, IMG_LOSE, THRESHOLD_LOSE):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('敗北しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
