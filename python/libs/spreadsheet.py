@@ -5,7 +5,7 @@ class SpreadSheet:
 
     def __init__(self, book_name) -> None:
         self.SCOPE =['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-        self.creds = ServiceAccountCredentials.from_json_keyfile_name('./client_secret.json', self.SCOPE)
+        self.creds = ServiceAccountCredentials.from_json_keyfile_name('./pokemon_sv_vs_support/client_secret.json', self.SCOPE)
         self.client = gspread.authorize(self.creds)
         self.workbook = self.client.open(book_name)
 
