@@ -69,12 +69,12 @@ TRIM_PLACE = {
     }
 }
 
-THRESHOLD_MATCHING = config['threshold']['matching']
-THRESHOLD_FOUND_ENEMY = config['threshold']['found_enemy']
-THRESHOLD_SELECTING = config['threshold']['selecting']
-THRESHOLD_BATTLING = config['threshold']['battling']
-THRESHOLD_WIN = config['threshold']['win']
-THRESHOLD_LOSE = config['threshold']['lose']
+THRESHOLD_MATCHING = float(config['threshold']['matching'])
+THRESHOLD_FOUND_ENEMY = float(config['threshold']['found_enemy'])
+THRESHOLD_SELECTING = float(config['threshold']['selecting'])
+THRESHOLD_BATTLING = float(config['threshold']['battling'])
+THRESHOLD_WIN = float(config['threshold']['win'])
+THRESHOLD_LOSE = float(config['threshold']['lose'])
 
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
