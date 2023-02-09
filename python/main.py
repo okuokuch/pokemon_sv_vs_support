@@ -153,21 +153,25 @@ def update_phase(img:np.ndarray, phase:int, spreadsheet:SpreadSheet)->int:
             return 5
         return phase
     elif phase == 5:
-        img = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
-        if recog.is_matched(img, IMG_WIN, THRESHOLD_WIN):  # 背景の変化が大きいため、閾値を低めに設定。
+        img_win_lose = recog.trim(img, TRIM_PLACE[4]['x'], TRIM_PLACE[4]['dx'], TRIM_PLACE[4]['y'], TRIM_PLACE[4]['dy'])
+        if recog.is_matched(img_win_lose, IMG_WIN, THRESHOLD_WIN):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('勝利しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
             spreadsheet.write_values(cell_list)
             logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
-        elif recog.is_matched(img, IMG_LOSE, THRESHOLD_LOSE):  # 背景の変化が大きいため、閾値を低めに設定。
+        elif recog.is_matched(img_win_lose, IMG_LOSE, THRESHOLD_LOSE):  # 背景の変化が大きいため、閾値を低めに設定。
             logger_stream.debug('敗北しました。')
             cell_list = spreadsheet.set_range(row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
             spreadsheet.write_values(cell_list)
             logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
             return 1
+        img = recog.trim(img, TRIM_PLACE[1]['x'], TRIM_PLACE[1]['dx'], TRIM_PLACE[1]['y'], TRIM_PLACE[1]['dy'])
+        if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
+            logger_stream.debug('勝敗の認識に失敗しました。対戦相手の検索中です。')
+            return 2
         return phase
 
 def find_most_similar_pokemon(img:np.ndarray)->tuple[str, float]:
