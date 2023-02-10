@@ -6,16 +6,24 @@ https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/
 
 ## 問合せ
 1.以下を参照して既存の問合せを参照してください
+
 Q&A
+
 https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/q-a
+
 バグ
+
 https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/bug-report
+
 改善要望
+
 https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/ideas
+
 マニュアル指摘
+
 https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/manual
 
-2.問題が解決しない場合、discussionsから新規作成し問合せてください
+2.同様の問合せがない場合、discussionsから新規作成し問合せてください
 
 ※New discussionを作成するにはGitHubアカウントが必要です
 
