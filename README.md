@@ -7,19 +7,13 @@ https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/
 ## Q&A
 1.以下を参照して既存のQ&Aを参照してください
 
-https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A701_Q%26A
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/q-a
 
-2.問題が解決しない場合、issueを起票し開発者へ問合わせてください
+2.問題が解決しない場合、discussionsから開発者へ問合わせてください
 
-※issueを起票するにはGitHubアカウントが必要です
+※New discussionを作成するにはGitHubアカウントが必要です
 
-起票する際には以下のいずれかの【○○】をタイトル先頭に記述してください。
-
-【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
-
-701_Q&Aのラベルは、回答者が付与しますので、対応不要です。
-
-以下、issueのコメント部へコピペして記載してください。
+以下、discussionsのコメント部へコピペして記載してください。
 ```
 ### 概要
 ここに1~3行程度にまとめた用件を書いてください。
@@ -34,13 +28,12 @@ https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A70
 発生事象を開発者へ共有するためのスクリーンショットや、
 app.logに出力された実行ログのコピペなどを添付してください。
 ```
-3.問題が解決した場合は、issueをクローズしてください。
 
 ## 開発予定機能
 近日更新予定
 
 ## リポジトリ概要
-スプレッドシートでポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
+スプレッドシートをメインにポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
 
 ここでは
 - 開発タスクの管理
