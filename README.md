@@ -50,9 +50,9 @@ app.logに出力された実行ログのコピペなどを添付してくださ�
 
 を行っています。
 ## 開発者メンバー紹介
-おくおく（GitHubID/twitterID?）
+おくおく（GitHub ID:okuokuch/Twitter ID:@okuokuch）
 
-しゅみる（GitHubID/twitterID?）
+しゅみる（GitHub ID:Syumiru/Twitter ID:@PokeSyumiru）
 
 ## License
 本体
