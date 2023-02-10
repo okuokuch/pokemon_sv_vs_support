@@ -4,12 +4,18 @@
 
 https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
 
-## Q&A
-1.以下を参照して既存のQ&Aを参照してください
-
+## 問合せ
+1.以下を参照して既存の問合せを参照してください
+Q&A
 https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/q-a
+バグ
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/bug-report
+改善要望
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/ideas
+マニュアル指摘
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/manual
 
-2.問題が解決しない場合、discussionsから開発者へ問合わせてください
+2.問題が解決しない場合、discussionsから新規作成し問合せてください
 
 ※New discussionを作成するにはGitHubアカウントが必要です
 
@@ -18,12 +24,11 @@ https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/q-a
 ### 概要
 ここに1~3行程度にまとめた用件を書いてください。
 ### 内容詳細
+質問の場合は、質問に関連する情報を書いてください。
+実行OSやPythonのバージョン、補足資料を添付する等、詳細に状況を説明していただければ、高い精度の回答を得られます。
 バグ報告の場合は、バグの詳細を書いてください。
 改善要望の場合は、現状と理想（AS-IS TO-BE）を書いてください。
 マニュアル指摘の場合は、ページおよび該当箇所を書いてください。
-質問の場合は、質問に関連する情報を書いてください。
-実行OSやPythonのバージョン、補足資料を添付する等、詳細に状況を説明していただければ、高い精度の回答を得られます。
-
 ### 補足資料
 発生事象を開発者へ共有するためのスクリーンショットや、
 app.logに出力された実行ログのコピペなどを添付してください。
