@@ -4,43 +4,49 @@
 
 https://docs.google.com/document/d/1z4vArEm-8D869G90EddrZHSBArq_vQblr27Fa2JkmJM/edit
 
-## Q&A
-1.以下を参照して既存のQ&Aを参照してください
+## 問合せ
+1.以下を参照して既存の問合せを参照してください
 
-https://github.com/okuokuch/pokemon_sv_vs_support/issues?q=is%3Aissue+label%3A701_Q%26A
+Q&A
 
-2.問題が解決しない場合、issueを起票し開発者へ問合わせてください
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/q-a
 
-※issueを起票するにはGitHubアカウントが必要です
+バグ
 
-起票する際には以下のいずれかの【○○】をタイトル先頭に記述してください。
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/bug-report
 
-【バグ報告】【改善要望】【マニュアル指摘】【質問】【その他】
+改善要望
 
-701_Q&Aのラベルは、回答者が付与しますので、対応不要です。
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/ideas
 
-以下、issueのコメント部へコピペして記載してください。
+マニュアル指摘
+
+https://github.com/okuokuch/pokemon_sv_vs_support/discussions/categories/manual
+
+2.同様の問合せがない場合、discussionsから新規作成し問合せてください
+
+※New discussionを作成するにはGitHubアカウントが必要です
+
+以下、discussionsのコメント部へコピペして記載してください。
 ```
 ### 概要
 ここに1~3行程度にまとめた用件を書いてください。
 ### 内容詳細
+質問の場合は、質問に関連する情報を書いてください。
+実行OSやPythonのバージョン、補足資料を添付する等、詳細に状況を説明していただければ、高い精度の回答を得られます。
 バグ報告の場合は、バグの詳細を書いてください。
 改善要望の場合は、現状と理想（AS-IS TO-BE）を書いてください。
 マニュアル指摘の場合は、ページおよび該当箇所を書いてください。
-質問の場合は、質問に関連する情報を書いてください。
-実行OSやPythonのバージョン、補足資料を添付する等、詳細に状況を説明していただければ、高い精度の回答を得られます。
-
 ### 補足資料
 発生事象を開発者へ共有するためのスクリーンショットや、
 app.logに出力された実行ログのコピペなどを添付してください。
 ```
-3.問題が解決した場合は、issueをクローズしてください。
 
 ## 開発予定機能
 近日更新予定
 
 ## リポジトリ概要
-スプレッドシートでポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
+スプレッドシートをメインにポケモン対戦の補助することを目的としたツールを開発するためのリポジトリです
 
 ここでは
 - 開発タスクの管理
