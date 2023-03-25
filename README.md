@@ -73,7 +73,7 @@ https://opencv.org/license/
 
 https://github.com/burnash/gspread/blob/master/LICENSE.txt
 - oauth2client:Apache License 2.0
-※NOTICEファイルなしのため添付不要
+※NOTICEファイルなしのためNOTICEファイルの添付不要
 
 https://github.com/googleapis/oauth2client/blob/master/LICENSE
 - pandas: BSD 3-Clause "New" or "Revised" License
