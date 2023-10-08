@@ -25,6 +25,7 @@ PHASE_3 = 'vs'
 PHASE_4 = 'result'
 SELECTING_ENEMY_TEAM = 'selecting_enemy_team'
 POKEMON_PLACE = 'pokemon'
+ACTION = 'action'
 X = 'left'
 DX = 'width'
 Y = 'top'
@@ -67,6 +68,12 @@ TRIM_PLACE = {
         'dx': int(config[POKEMON_PLACE][DX]),
         'y': int(config[POKEMON_PLACE][Y]),
         'dy': int(config[POKEMON_PLACE][DY]),
+    },
+    'actions': {
+        'x': int(config[ACTION][X]),
+        'dx': int(config[ACTION][DX]),
+        'y': int(config[ACTION][Y]),
+        'dy': int(config[ACTION][DY]),
     }
 }
 
@@ -76,6 +83,7 @@ THRESHOLD_SELECTING = float(config['threshold']['selecting'])
 THRESHOLD_BATTLING = float(config['threshold']['battling'])
 THRESHOLD_WIN = float(config['threshold']['win'])
 THRESHOLD_LOSE = float(config['threshold']['lose'])
+THRESHOLD_ACTION = float(config['threshold']['action'])
 
 PORT = int(config['obs']['port'])
 PASSWORD = config['obs']['pass']
@@ -98,6 +106,33 @@ POKE_PING_FILES = glob.glob(
     './pokemon_sv_vs_support/python/asset/poke_png/*.png')
 ID = pd.read_csv('./pokemon_sv_vs_support/python/asset/poke_id.csv')
 
+IMG_ACTION_1 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/aiteno.png'))
+IMG_ACTION_2 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/exclamation_mark.png'))
+IMG_ACTION_3 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/kuridashita.png'))
+IMG_ACTION_4 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/modore.png'))
+IMG_ACTION_5 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/no.png'))
+IMG_ACTION_6 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/taoreta.png'))
+IMG_ACTION_7 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/tukatta.png'))
+IMG_ACTION_8 = recog.convert2gray(cv2.imread(
+    './pokemon_sv_vs_support/python/asset/action_png/yuke.png'))
+IMG_ACTIONS = [
+    IMG_ACTION_1,
+    IMG_ACTION_2,
+    IMG_ACTION_3,
+    IMG_ACTION_4,
+    IMG_ACTION_5,
+    IMG_ACTION_6,
+    IMG_ACTION_7,
+    IMG_ACTION_8,
+]
+
 # スプレッドシートの構造を変化させた場合は、ここを編集する。
 VS_TIMESTAMP_COLUMN = 1
 VS_ID_COLUMN = 2
@@ -112,6 +147,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
     # main.pyの中で、引き継ぎたい変数。
     global vs_id
     global row_number
+    global action_number
     if phase == 0 or phase == 1:
         img = recog.trim(
             img,
@@ -134,6 +170,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             logger_stream.debug('対戦相手が見つかりました。')
             vs_id = len(spreadsheet.get_col_values(1))
             row_number = vs_id + 1
+            action_number = 0
             return 3
         return phase
     elif phase == 3:
@@ -179,6 +216,13 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             return 4
         return phase
     elif phase == 4:
+        if detect_character(img):
+            cv2.imwrite(
+                '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
+                    os.getcwd(),
+                    vs_id,
+                    action_number),
+                img)
         img = recog.trim(img,
                          TRIM_PLACE[3]['x'],
                          TRIM_PLACE[3]['dx'],
@@ -199,45 +243,53 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             return 5
         return phase
     elif phase == 5:
-        img_win_lose = recog.trim(
-            img,
-            TRIM_PLACE[4]['x'],
-            TRIM_PLACE[4]['dx'],
-            TRIM_PLACE[4]['y'],
-            TRIM_PLACE[4]['dy'])
-        if recog.is_matched(img_win_lose, IMG_WIN, THRESHOLD_WIN):
-            # 背景の変化が大きいため、閾値を低めに設定。
-            logger_stream.debug('勝利しました。')
-            cell_list = spreadsheet.set_range(
-                row_number,
-                WIN_LOOSE_COLUMN,
-                row_number,
-                WIN_LOOSE_COLUMN)
-            cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
-            spreadsheet.write_values(cell_list)
-            logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
-            return 1
-        elif recog.is_matched(img_win_lose, IMG_LOSE, THRESHOLD_LOSE):
-            # 背景の変化が大きいため、閾値を低めに設定。
-            logger_stream.debug('敗北しました。')
-            cell_list = spreadsheet.set_range(
-                row_number,
-                WIN_LOOSE_COLUMN,
-                row_number,
-                WIN_LOOSE_COLUMN)
-            cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
-            spreadsheet.write_values(cell_list)
-            logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
-            return 1
-        img = recog.trim(
-            img,
-            TRIM_PLACE[1]['x'],
-            TRIM_PLACE[1]['dx'],
-            TRIM_PLACE[1]['y'],
-            TRIM_PLACE[1]['dy'])
-        if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
-            logger_stream.debug('勝敗の認識に失敗しました。対戦相手の検索中です。')
-            return 2
+        if detect_character(img):
+            cv2.imwrite(
+                '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
+                    os.getcwd(),
+                    vs_id,
+                    action_number),
+                img)
+        else:
+            img_win_lose = recog.trim(
+                img,
+                TRIM_PLACE[4]['x'],
+                TRIM_PLACE[4]['dx'],
+                TRIM_PLACE[4]['y'],
+                TRIM_PLACE[4]['dy'])
+            if recog.is_matched(img_win_lose, IMG_WIN, THRESHOLD_WIN):
+                # 背景の変化が大きいため、閾値を低めに設定。
+                logger_stream.debug('勝利しました。')
+                cell_list = spreadsheet.set_range(
+                    row_number,
+                    WIN_LOOSE_COLUMN,
+                    row_number,
+                    WIN_LOOSE_COLUMN)
+                cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
+                spreadsheet.write_values(cell_list)
+                logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
+                return 1
+            elif recog.is_matched(img_win_lose, IMG_LOSE, THRESHOLD_LOSE):
+                # 背景の変化が大きいため、閾値を低めに設定。
+                logger_stream.debug('敗北しました。')
+                cell_list = spreadsheet.set_range(
+                    row_number,
+                    WIN_LOOSE_COLUMN,
+                    row_number,
+                    WIN_LOOSE_COLUMN)
+                cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
+                spreadsheet.write_values(cell_list)
+                logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
+                return 1
+            img = recog.trim(
+                img,
+                TRIM_PLACE[1]['x'],
+                TRIM_PLACE[1]['dx'],
+                TRIM_PLACE[1]['y'],
+                TRIM_PLACE[1]['dy'])
+            if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
+                logger_stream.debug('勝敗の認識に失敗しました。対戦相手の検索中です。')
+                return 2
         return phase
 
 
@@ -295,6 +347,25 @@ def recog_enemy_pokemons(img_selecting: np.ndarray) -> list[
         else:
             pokemons.append('')
     return pokemons
+
+
+def detect_character(img):
+    white_character_img = recog.binarize(
+        recog.convert2gray(
+            recog.trim(
+                img,
+                TRIM_PLACE['actions']['x'],
+                TRIM_PLACE['actions']['dx'],
+                TRIM_PLACE['actions']['y'],
+                TRIM_PLACE['actions']['dy'],
+            )
+        ),
+        230
+    )
+    for action_temp in IMG_ACTIONS:
+        if recog.is_matched(white_character_img, action_temp, THRESHOLD_ACTION):
+            return True
+    return False
 
 
 def main():
