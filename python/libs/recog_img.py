@@ -1,16 +1,22 @@
 import cv2
 import numpy as np
-import configparser
+
 
 class ImageRecognition:
     def __init__(self) -> None:
         pass
 
-    def trim(self, img:np.ndarray, x:int, dx:int, y:int, dy:int)->np.ndarray:
+    def trim(
+            self,
+            img: np.ndarray,
+            x: int,
+            dx: int,
+            y: int,
+            dy: int) -> np.ndarray:
         """画像をトリムする。"""
         return img[y:y+dy, x:x+dx]
 
-    def resize(self, img:np.ndarray, raito:float)->np.ndarray:
+    def resize(self, img: np.ndarray, raito: float) -> np.ndarray:
         """画像の縮尺を変更する
 
         param:
@@ -22,7 +28,34 @@ class ImageRecognition:
         """
         return cv2.resize(img, None, fx=raito, fy=raito)
 
-    def find_max_similarity(self, img:np.ndarray, temp_img:np.ndarray)->float:
+    def convert2gray(self, img: np.ndarray) -> np.ndarray:
+        """白黒画像に変換
+
+        param:
+            img:白黒化する画像
+        ---------------------------
+        return:
+            白黒化した画像
+        """
+        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    def binarize(self, img: np.ndarray, threshold: int) -> np.ndarray:
+        """画像を2値化変換
+
+        pram:
+            img:2値化する画像
+            threshold: 閾値
+        ---------------------------
+        return:
+            2値値した画像
+        """
+        ret, white_img = cv2.threshold(img, threshold, 255, 0)
+        return white_img
+
+    def find_max_similarity(
+            self,
+            img: np.ndarray,
+            temp_img: np.ndarray) -> float:
         """テンプレートマッチングし、類似度を出力する
 
         param:
@@ -35,21 +68,24 @@ class ImageRecognition:
         Attention:
             img画像サイズより、temp_img画像サイズが大きいとエラーが発生します
         """
-        match = cv2.matchTemplate(img,temp_img,cv2.TM_CCOEFF_NORMED)
-        minVal,maxVal,minLoc,maxLoc = cv2.minMaxLoc(match)
-        
+        match = cv2.matchTemplate(img, temp_img, cv2.TM_CCOEFF_NORMED)
+        minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(match)
         return maxVal
 
-    def show(self, img:np.ndarray, window_name:str = 'test')->None:
+    def show(self, img: np.ndarray, window_name: str = 'test') -> None:
         """画像を表示する。"""
 
         cv2.imshow(window_name, img)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
-    def is_matched(self, img_origin:np.ndarray, img_temp:np.ndarray, th:float)->bool:
+    def is_matched(
+            self,
+            img_origin: np.ndarray,
+            img_temp: np.ndarray,
+            th: float) -> bool:
         """画像が含まれるか判定する。
-        
+
         param:
             img_origin:調査する画像
             imt_temp:含んでほしい画像
