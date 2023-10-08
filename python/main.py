@@ -119,7 +119,7 @@ IMG_ACTION_5 = recog.convert2gray(cv2.imread(
 IMG_ACTION_6 = recog.convert2gray(cv2.imread(
     './pokemon_sv_vs_support/python/asset/action_png/taoreta.png'))
 IMG_ACTION_7 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/tukatta.png'))
+    './pokemon_sv_vs_support/python/asset/action_png/tsukatta.png'))
 IMG_ACTION_8 = recog.convert2gray(cv2.imread(
     './pokemon_sv_vs_support/python/asset/action_png/yuke.png'))
 IMG_ACTIONS = [
@@ -148,6 +148,8 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
     global vs_id
     global row_number
     global action_number
+    global white_character_old
+    global update_time
     if phase == 0 or phase == 1:
         img = recog.trim(
             img,
@@ -213,16 +215,32 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
                 [config['my_team']['id']])
             spreadsheet.write_values(cell_list)
             logger_stream.debug('自分チームIDをスプレッドシートに書き込みました。')
+            update_time = datetime.datetime.now()
             return 4
         return phase
     elif phase == 4:
-        if detect_character(img):
+        is_character, white_character = detect_character(img)
+        dt: datetime.timedelta = datetime.datetime.now() - update_time
+        if is_character:
+            try:
+                if (
+                    recog.is_matched(
+                        white_character,
+                        white_character_old,
+                        0.8) and dt.total_seconds() <= 5):
+                    return phase
+            except NameError:
+                # 初回はエラーが発生するのでそのエスケープ
+                pass
+            update_time = datetime.datetime.now()
             cv2.imwrite(
                 '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
                     os.getcwd(),
                     vs_id,
                     action_number),
                 img)
+            white_character_old = white_character.copy()
+            action_number += 1
         img = recog.trim(img,
                          TRIM_PLACE[3]['x'],
                          TRIM_PLACE[3]['dx'],
@@ -239,17 +257,28 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
                 VS_TIMESTAMP_COLUMN)
             cell_list = spreadsheet.set_values_on_range(cell_list, [now])
             spreadsheet.write_values(cell_list)
-            logger_stream.debug('対戦開始日時をスプレッドシートに書き込みました。')    
+            logger_stream.debug('対戦開始日時をスプレッドシートに書き込みました。')
             return 5
         return phase
     elif phase == 5:
-        if detect_character(img):
+        is_character, white_character = detect_character(img)
+        dt: datetime.timedelta = datetime.datetime.now() - update_time
+        if is_character:
+            if recog.is_matched(
+                white_character,
+                white_character_old,
+                0.8
+            ) and dt.total_seconds() <= 5:
+                return phase
+            update_time = datetime.datetime.now()
             cv2.imwrite(
                 '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
                     os.getcwd(),
                     vs_id,
                     action_number),
                 img)
+            white_character_old = white_character.copy()
+            action_number += 1
         else:
             img_win_lose = recog.trim(
                 img,
@@ -363,9 +392,13 @@ def detect_character(img):
         230
     )
     for action_temp in IMG_ACTIONS:
-        if recog.is_matched(white_character_img, action_temp, THRESHOLD_ACTION):
-            return True
-    return False
+        if recog.is_matched(
+            white_character_img,
+            action_temp,
+            THRESHOLD_ACTION
+        ):
+            return True, white_character_img
+    return False, white_character_img
 
 
 def main():
