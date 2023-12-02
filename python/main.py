@@ -14,114 +14,118 @@ import logging.config
 recog = ImageRecognition()
 
 config = configparser.ConfigParser()
-config.read('./pokemon_sv_vs_support/python/asset/setting.ini',
-            encoding='utf-8')
+config.read("./pokemon_sv_vs_support/python/asset/setting.ini", encoding="utf-8")
 
-logging.config.fileConfig('./pokemon_sv_vs_support/python/asset/logging.ini')
-logger_stream = logging.getLogger('stream')
-PHASE_1 = 'matching'
-PHASE_2 = 'selecting'
-PHASE_3 = 'vs'
-PHASE_4 = 'result'
-SELECTING_ENEMY_TEAM = 'selecting_enemy_team'
-POKEMON_PLACE = 'pokemon'
-ACTION = 'action'
-X = 'left'
-DX = 'width'
-Y = 'top'
-DY = 'height'
+logging.config.fileConfig("./pokemon_sv_vs_support/python/asset/logging.ini")
+logger_stream = logging.getLogger("stream")
+PHASE_1 = "matching"
+PHASE_2 = "selecting"
+PHASE_3 = "vs"
+PHASE_4 = "result"
+SELECTING_ENEMY_TEAM = "selecting_enemy_team"
+POKEMON_PLACE = "pokemon"
+ACTION = "action"
+X = "left"
+DX = "width"
+Y = "top"
+DY = "height"
 
 # 画像認識の範囲を外部ファイルで設定できるようにするため、iniファイルを利用。
 TRIM_PLACE = {
     1: {
-        'x': int(config[PHASE_1][X]),
-        'dx': int(config[PHASE_1][DX]),
-        'y': int(config[PHASE_1][Y]),
-        'dy': int(config[PHASE_1][DY]),
+        "x": int(config[PHASE_1][X]),
+        "dx": int(config[PHASE_1][DX]),
+        "y": int(config[PHASE_1][Y]),
+        "dy": int(config[PHASE_1][DY]),
     },
     2: {
-        'x': int(config[PHASE_2][X]),
-        'dx': int(config[PHASE_2][DX]),
-        'y': int(config[PHASE_2][Y]),
-        'dy': int(config[PHASE_2][DY]),
+        "x": int(config[PHASE_2][X]),
+        "dx": int(config[PHASE_2][DX]),
+        "y": int(config[PHASE_2][Y]),
+        "dy": int(config[PHASE_2][DY]),
     },
     3: {
-        'x': int(config[PHASE_3][X]),
-        'dx': int(config[PHASE_3][DX]),
-        'y': int(config[PHASE_3][Y]),
-        'dy': int(config[PHASE_3][DY]),
+        "x": int(config[PHASE_3][X]),
+        "dx": int(config[PHASE_3][DX]),
+        "y": int(config[PHASE_3][Y]),
+        "dy": int(config[PHASE_3][DY]),
     },
     4: {
-        'x': int(config[PHASE_4][X]),
-        'dx': int(config[PHASE_4][DX]),
-        'y': int(config[PHASE_4][Y]),
-        'dy': int(config[PHASE_4][DY]),
+        "x": int(config[PHASE_4][X]),
+        "dx": int(config[PHASE_4][DX]),
+        "y": int(config[PHASE_4][Y]),
+        "dy": int(config[PHASE_4][DY]),
     },
-    'selecting_enemy_team': {
-        'x': int(config[SELECTING_ENEMY_TEAM][X]),
-        'dx': int(config[SELECTING_ENEMY_TEAM][DX]),
-        'y': int(config[SELECTING_ENEMY_TEAM][Y]),
-        'dy': int(config[SELECTING_ENEMY_TEAM][DY]),
+    "selecting_enemy_team": {
+        "x": int(config[SELECTING_ENEMY_TEAM][X]),
+        "dx": int(config[SELECTING_ENEMY_TEAM][DX]),
+        "y": int(config[SELECTING_ENEMY_TEAM][Y]),
+        "dy": int(config[SELECTING_ENEMY_TEAM][DY]),
     },
-    'pokemon': {
-        'x': int(config[POKEMON_PLACE][X]),
-        'dx': int(config[POKEMON_PLACE][DX]),
-        'y': int(config[POKEMON_PLACE][Y]),
-        'dy': int(config[POKEMON_PLACE][DY]),
+    "pokemon": {
+        "x": int(config[POKEMON_PLACE][X]),
+        "dx": int(config[POKEMON_PLACE][DX]),
+        "y": int(config[POKEMON_PLACE][Y]),
+        "dy": int(config[POKEMON_PLACE][DY]),
     },
-    'actions': {
-        'x': int(config[ACTION][X]),
-        'dx': int(config[ACTION][DX]),
-        'y': int(config[ACTION][Y]),
-        'dy': int(config[ACTION][DY]),
-    }
+    "actions": {
+        "x": int(config[ACTION][X]),
+        "dx": int(config[ACTION][DX]),
+        "y": int(config[ACTION][Y]),
+        "dy": int(config[ACTION][DY]),
+    },
 }
 
-THRESHOLD_MATCHING = float(config['threshold']['matching'])
-THRESHOLD_FOUND_ENEMY = float(config['threshold']['found_enemy'])
-THRESHOLD_SELECTING = float(config['threshold']['selecting'])
-THRESHOLD_BATTLING = float(config['threshold']['battling'])
-THRESHOLD_WIN = float(config['threshold']['win'])
-THRESHOLD_LOSE = float(config['threshold']['lose'])
-THRESHOLD_ACTION = float(config['threshold']['action'])
+THRESHOLD_MATCHING = float(config["threshold"]["matching"])
+THRESHOLD_FOUND_ENEMY = float(config["threshold"]["found_enemy"])
+THRESHOLD_SELECTING = float(config["threshold"]["selecting"])
+THRESHOLD_BATTLING = float(config["threshold"]["battling"])
+THRESHOLD_WIN = float(config["threshold"]["win"])
+THRESHOLD_LOSE = float(config["threshold"]["lose"])
+THRESHOLD_ACTION = float(config["threshold"]["action"])
 
-PORT = int(config['obs']['port'])
-PASSWORD = config['obs']['pass']
-SOURCE = config['obs']['source']
+PORT = int(config["obs"]["port"])
+PASSWORD = config["obs"]["pass"]
+SOURCE = config["obs"]["source"]
 
-IMG_MATCHING = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/matching.png')
+IMG_MATCHING = cv2.imread("./pokemon_sv_vs_support/python/asset/temp_png/matching.png")
 IMG_FOUND_ENEMY = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/found_enemy.png')
+    "./pokemon_sv_vs_support/python/asset/temp_png/found_enemy.png"
+)
 IMG_SELECTING = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/selecting.png')
-IMG_BATTLING = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/battling.png')
-IMG_WIN = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/win.png')
-IMG_LOSE = cv2.imread(
-    './pokemon_sv_vs_support/python/asset/temp_png/lose.png')
+    "./pokemon_sv_vs_support/python/asset/temp_png/selecting.png"
+)
+IMG_BATTLING = cv2.imread("./pokemon_sv_vs_support/python/asset/temp_png/battling.png")
+IMG_WIN = cv2.imread("./pokemon_sv_vs_support/python/asset/temp_png/win.png")
+IMG_LOSE = cv2.imread("./pokemon_sv_vs_support/python/asset/temp_png/lose.png")
 
-POKE_PING_FILES = glob.glob(
-    './pokemon_sv_vs_support/python/asset/poke_png/*.png')
-ID = pd.read_csv('./pokemon_sv_vs_support/python/asset/poke_id.csv')
+POKE_PING_FILES = glob.glob("./pokemon_sv_vs_support/python/asset/poke_png/*.png")
+ID = pd.read_csv("./pokemon_sv_vs_support/python/asset/poke_id.csv")
 
-IMG_ACTION_1 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/aiteno.png'))
-IMG_ACTION_2 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/exclamation_mark.png'))
-IMG_ACTION_3 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/kuridashita.png'))
-IMG_ACTION_4 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/modore.png'))
-IMG_ACTION_5 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/no.png'))
-IMG_ACTION_6 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/taoreta.png'))
-IMG_ACTION_7 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/tsukatta.png'))
-IMG_ACTION_8 = recog.convert2gray(cv2.imread(
-    './pokemon_sv_vs_support/python/asset/action_png/yuke.png'))
+IMG_ACTION_1 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/aiteno.png")
+)
+IMG_ACTION_2 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/exclamation_mark.png")
+)
+IMG_ACTION_3 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/kuridashita.png")
+)
+IMG_ACTION_4 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/modore.png")
+)
+IMG_ACTION_5 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/no.png")
+)
+IMG_ACTION_6 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/taoreta.png")
+)
+IMG_ACTION_7 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/tsukatta.png")
+)
+IMG_ACTION_8 = recog.convert2gray(
+    cv2.imread("./pokemon_sv_vs_support/python/asset/action_png/yuke.png")
+)
 IMG_ACTIONS = [
     IMG_ACTION_1,
     IMG_ACTION_2,
@@ -153,68 +157,79 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
     if phase == 0 or phase == 1:
         img = recog.trim(
             img,
-            TRIM_PLACE[1]['x'],
-            TRIM_PLACE[1]['dx'],
-            TRIM_PLACE[1]['y'],
-            TRIM_PLACE[1]['dy'])
+            TRIM_PLACE[1]["x"],
+            TRIM_PLACE[1]["dx"],
+            TRIM_PLACE[1]["y"],
+            TRIM_PLACE[1]["dy"],
+        )
         if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
-            logger_stream.debug('対戦相手検索中です。')
+            logger_stream.debug("対戦相手検索中です。")
             return 2
         return phase
     elif phase == 2:
-        img = recog.trim(img,
-                         TRIM_PLACE[1]['x'],
-                         TRIM_PLACE[1]['dx'],
-                         TRIM_PLACE[1]['y'],
-                         TRIM_PLACE[1]['dy'])
-        if recog.is_matched(img, IMG_FOUND_ENEMY, THRESHOLD_FOUND_ENEMY):
+        img_text = recog.trim(
+            img,
+            TRIM_PLACE[1]["x"],
+            TRIM_PLACE[1]["dx"],
+            TRIM_PLACE[1]["y"],
+            TRIM_PLACE[1]["dy"],
+        )
+        if recog.is_matched(img_text, IMG_FOUND_ENEMY, THRESHOLD_FOUND_ENEMY):
             # 【今後修正】順位認識を行う。
-            logger_stream.debug('対戦相手が見つかりました。')
+            logger_stream.debug("対戦相手が見つかりました。")
             vs_id = len(spreadsheet.get_col_values(1))
-            row_number = vs_id + 1
             action_number = 0
+            cv2.imwrite(
+                "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
+                    os.getcwd(), vs_id, action_number
+                ),
+                img,
+            )
+            action_number += 1
+            row_number = vs_id + 1
+            is_character, white_character_old = detect_character(
+                img
+            )  # white_character_oldエラー対策で設定。
             return 3
         return phase
     elif phase == 3:
         img_team = recog.trim(
             img,
-            TRIM_PLACE['selecting_enemy_team']['x'],
-            TRIM_PLACE['selecting_enemy_team']['dx'],
-            TRIM_PLACE['selecting_enemy_team']['y'],
-            TRIM_PLACE['selecting_enemy_team']['dy'])
+            TRIM_PLACE["selecting_enemy_team"]["x"],
+            TRIM_PLACE["selecting_enemy_team"]["dx"],
+            TRIM_PLACE["selecting_enemy_team"]["y"],
+            TRIM_PLACE["selecting_enemy_team"]["dy"],
+        )
         img = recog.trim(
             img,
-            TRIM_PLACE[2]['x'],
-            TRIM_PLACE[2]['dx'],
-            TRIM_PLACE[2]['y'],
-            TRIM_PLACE[2]['dy'])
+            TRIM_PLACE[2]["x"],
+            TRIM_PLACE[2]["dx"],
+            TRIM_PLACE[2]["y"],
+            TRIM_PLACE[2]["dy"],
+        )
         if recog.is_matched(img, IMG_SELECTING, THRESHOLD_SELECTING):
             # ポケモン認識処理を行う
             pokemons = recog_enemy_pokemons(img_team)
-            logger_stream.debug('相手ポケモンを認識しました。{}'.format(pokemons))
+            logger_stream.debug("相手ポケモンを認識しました。{}".format(pokemons))
             values = [vs_id]
             values.extend(pokemons)
             cell_list = spreadsheet.set_range(
-                row_number,
-                VS_ID_COLUMN,
-                row_number,
-                ENEMY_TEAM_LAST_COLUMN)
+                row_number, VS_ID_COLUMN, row_number, ENEMY_TEAM_LAST_COLUMN
+            )
             cell_list = spreadsheet.set_values_on_range(cell_list, values)
             spreadsheet.write_values(cell_list)
-            logger_stream.debug('対戦ID、ポケモン名をスプレッドシートに書き込みました。')
+            logger_stream.debug("対戦ID、ポケモン名をスプレッドシートに書き込みました。")
             config.read(
-                './pokemon_sv_vs_support/python/asset/setting.ini',
-                encoding='utf-8')
+                "./pokemon_sv_vs_support/python/asset/setting.ini", encoding="utf-8"
+            )
             cell_list = spreadsheet.set_range(
-                row_number,
-                MY_TEAM_COLUMN,
-                row_number,
-                MY_TEAM_COLUMN)
+                row_number, MY_TEAM_COLUMN, row_number, MY_TEAM_COLUMN
+            )
             cell_list = spreadsheet.set_values_on_range(
-                cell_list,
-                [config['my_team']['id']])
+                cell_list, [config["my_team"]["id"]]
+            )
             spreadsheet.write_values(cell_list)
-            logger_stream.debug('自分チームIDをスプレッドシートに書き込みました。')
+            logger_stream.debug("自分チームIDをスプレッドシートに書き込みました。")
             update_time = datetime.datetime.now()
             return 4
         return phase
@@ -224,100 +239,96 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
         if is_character:
             try:
                 if (
-                    recog.is_matched(
-                        white_character,
-                        white_character_old,
-                        0.8) and dt.total_seconds() <= 5):
+                    recog.is_matched(white_character, white_character_old, 0.8)
+                    and dt.total_seconds() <= 5
+                ):
                     return phase
             except NameError:
                 # 初回はエラーが発生するのでそのエスケープ
                 pass
             update_time = datetime.datetime.now()
             cv2.imwrite(
-                '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
-                    os.getcwd(),
-                    vs_id,
-                    action_number),
-                img)
+                "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
+                    os.getcwd(), vs_id, action_number
+                ),
+                img,
+            )
             white_character_old = white_character.copy()
             action_number += 1
-        img = recog.trim(img,
-                         TRIM_PLACE[3]['x'],
-                         TRIM_PLACE[3]['dx'],
-                         TRIM_PLACE[3]['y'],
-                         TRIM_PLACE[3]['dy'])
+        img = recog.trim(
+            img,
+            TRIM_PLACE[3]["x"],
+            TRIM_PLACE[3]["dx"],
+            TRIM_PLACE[3]["y"],
+            TRIM_PLACE[3]["dy"],
+        )
         if recog.is_matched(img, IMG_BATTLING, THRESHOLD_BATTLING):
             # 時間測定開始する。
-            logger_stream.debug('対戦を開始しました。')
-            now = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            logger_stream.debug("対戦を開始しました。")
+            now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
             cell_list = spreadsheet.set_range(
-                row_number,
-                VS_TIMESTAMP_COLUMN,
-                row_number,
-                VS_TIMESTAMP_COLUMN)
+                row_number, VS_TIMESTAMP_COLUMN, row_number, VS_TIMESTAMP_COLUMN
+            )
             cell_list = spreadsheet.set_values_on_range(cell_list, [now])
             spreadsheet.write_values(cell_list)
-            logger_stream.debug('対戦開始日時をスプレッドシートに書き込みました。')
+            logger_stream.debug("対戦開始日時をスプレッドシートに書き込みました。")
             return 5
         return phase
     elif phase == 5:
         is_character, white_character = detect_character(img)
         dt: datetime.timedelta = datetime.datetime.now() - update_time
         if is_character:
-            if recog.is_matched(
-                white_character,
-                white_character_old,
-                0.8
-            ) and dt.total_seconds() <= 5:
+            if (
+                recog.is_matched(white_character, white_character_old, 0.8)
+                and dt.total_seconds() <= 5
+            ):
                 return phase
             update_time = datetime.datetime.now()
             cv2.imwrite(
-                '{}/pokemon_sv_vs_support/actions_png/{}_{}.png'.format(
-                    os.getcwd(),
-                    vs_id,
-                    action_number),
-                img)
+                "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
+                    os.getcwd(), vs_id, action_number
+                ),
+                img,
+            )
             white_character_old = white_character.copy()
             action_number += 1
         else:
             img_win_lose = recog.trim(
                 img,
-                TRIM_PLACE[4]['x'],
-                TRIM_PLACE[4]['dx'],
-                TRIM_PLACE[4]['y'],
-                TRIM_PLACE[4]['dy'])
+                TRIM_PLACE[4]["x"],
+                TRIM_PLACE[4]["dx"],
+                TRIM_PLACE[4]["y"],
+                TRIM_PLACE[4]["dy"],
+            )
             if recog.is_matched(img_win_lose, IMG_WIN, THRESHOLD_WIN):
                 # 背景の変化が大きいため、閾値を低めに設定。
-                logger_stream.debug('勝利しました。')
+                logger_stream.debug("勝利しました。")
                 cell_list = spreadsheet.set_range(
-                    row_number,
-                    WIN_LOOSE_COLUMN,
-                    row_number,
-                    WIN_LOOSE_COLUMN)
-                cell_list = spreadsheet.set_values_on_range(cell_list, ['〇'])
+                    row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN
+                )
+                cell_list = spreadsheet.set_values_on_range(cell_list, ["〇"])
                 spreadsheet.write_values(cell_list)
-                logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
+                logger_stream.debug("勝敗をスプレッドシートに書き込みました。")
                 return 1
             elif recog.is_matched(img_win_lose, IMG_LOSE, THRESHOLD_LOSE):
                 # 背景の変化が大きいため、閾値を低めに設定。
-                logger_stream.debug('敗北しました。')
+                logger_stream.debug("敗北しました。")
                 cell_list = spreadsheet.set_range(
-                    row_number,
-                    WIN_LOOSE_COLUMN,
-                    row_number,
-                    WIN_LOOSE_COLUMN)
-                cell_list = spreadsheet.set_values_on_range(cell_list, ['×'])
+                    row_number, WIN_LOOSE_COLUMN, row_number, WIN_LOOSE_COLUMN
+                )
+                cell_list = spreadsheet.set_values_on_range(cell_list, ["×"])
                 spreadsheet.write_values(cell_list)
-                logger_stream.debug('勝敗をスプレッドシートに書き込みました。')
+                logger_stream.debug("勝敗をスプレッドシートに書き込みました。")
                 return 1
             img = recog.trim(
                 img,
-                TRIM_PLACE[1]['x'],
-                TRIM_PLACE[1]['dx'],
-                TRIM_PLACE[1]['y'],
-                TRIM_PLACE[1]['dy'])
+                TRIM_PLACE[1]["x"],
+                TRIM_PLACE[1]["dx"],
+                TRIM_PLACE[1]["y"],
+                TRIM_PLACE[1]["dy"],
+            )
             if recog.is_matched(img, IMG_MATCHING, THRESHOLD_MATCHING):
-                logger_stream.debug('勝敗の認識に失敗しました。対戦相手の検索中です。')
+                logger_stream.debug("勝敗の認識に失敗しました。対戦相手の検索中です。")
                 return 2
         return phase
 
@@ -331,7 +342,7 @@ def find_most_similar_pokemon(img: np.ndarray) -> tuple[str, float]:
         max_similarity:類似度
     """
     max_similarity = 0
-    img_name = ''
+    img_name = ""
 
     for file_path in POKE_PING_FILES:  # 全ポケモン画像に対してテンプレートマッチングを実行
         temp_origin = cv2.imread(file_path)
@@ -346,13 +357,14 @@ def find_most_similar_pokemon(img: np.ndarray) -> tuple[str, float]:
             if similarity > max_similarity:
                 max_similarity = similarity
                 img_name, ext = os.path.splitext(os.path.basename(file_path))
-    poke_name = ID[ID['img_name'] == img_name]['name'].values[0]
+    poke_name = ID[ID["img_name"] == img_name]["name"].values[0]
 
     return poke_name, max_similarity
 
 
-def recog_enemy_pokemons(img_selecting: np.ndarray) -> list[
-        str, str, str, str, str, str]:
+def recog_enemy_pokemons(
+    img_selecting: np.ndarray,
+) -> list[str, str, str, str, str, str]:
     """相手選出部分のポケモン画像を認識する。
 
     param:
@@ -362,19 +374,20 @@ def recog_enemy_pokemons(img_selecting: np.ndarray) -> list[
     """
     pokemons = []
     # 1~6体目を順番に認識しpokemonsに出力する。
-    place = TRIM_PLACE['pokemon']
+    place = TRIM_PLACE["pokemon"]
     for i in range(6):
         img_poke = recog.trim(
             img_selecting,
-            place['x'],
-            place['dx'],
-            place['y']+(place['dy']+1)*i,
-            place['dy'])
+            place["x"],
+            place["dx"],
+            place["y"] + (place["dy"] + 1) * i,
+            place["dy"],
+        )
         pokemon_name, similarity = find_most_similar_pokemon(img_poke)
         if similarity >= 0.75:
             pokemons.append(pokemon_name)
         else:
-            pokemons.append('')
+            pokemons.append("")
     return pokemons
 
 
@@ -383,20 +396,16 @@ def detect_character(img):
         recog.convert2gray(
             recog.trim(
                 img,
-                TRIM_PLACE['actions']['x'],
-                TRIM_PLACE['actions']['dx'],
-                TRIM_PLACE['actions']['y'],
-                TRIM_PLACE['actions']['dy'],
+                TRIM_PLACE["actions"]["x"],
+                TRIM_PLACE["actions"]["dx"],
+                TRIM_PLACE["actions"]["y"],
+                TRIM_PLACE["actions"]["dy"],
             )
         ),
-        230
+        230,
     )
     for action_temp in IMG_ACTIONS:
-        if recog.is_matched(
-            white_character_img,
-            action_temp,
-            THRESHOLD_ACTION
-        ):
+        if recog.is_matched(white_character_img, action_temp, THRESHOLD_ACTION):
             return True, white_character_img
     return False, white_character_img
 
@@ -404,8 +413,8 @@ def detect_character(img):
 def main():
     ws = OBS(PORT, PASSWORD)
     path = os.getcwd()
-    img_path = '{}/pokemon_sv_vs_support/python/screen.png'.format(path)
-    logger_stream.info('{}に保存します。'.format(img_path))
+    img_path = "{}/pokemon_sv_vs_support/python/screen.png".format(path)
+    logger_stream.info("{}に保存します。".format(img_path))
     is_turned_on = True
     phase = 0
     """phaseの定義
@@ -418,9 +427,9 @@ def main():
     6:勝敗画面
     """
 
-    spreadsheet = SpreadSheet(config['spreadsheet']['book'])
-    spreadsheet.set_worksheet(config['spreadsheet']['log_sheet'])
-    logger_stream.debug('出力するスプレッドシートを認識しました。')
+    spreadsheet = SpreadSheet(config["spreadsheet"]["book"])
+    spreadsheet.set_worksheet(config["spreadsheet"]["log_sheet"])
+    logger_stream.debug("出力するスプレッドシートを認識しました。")
 
     while is_turned_on:
         # OBSでスクショを取る。
@@ -430,9 +439,9 @@ def main():
         phase = update_phase(img, phase, spreadsheet)
 
 
-if __name__ == '__main__':
-    logger_stream.debug('起動しました。')
+if __name__ == "__main__":
+    logger_stream.debug("起動しました。")
     try:
         main()
     except:
-        logger_stream.exception('エラーが発生しました。')
+        logger_stream.exception("エラーが発生しました。")
