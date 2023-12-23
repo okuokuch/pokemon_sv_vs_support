@@ -154,6 +154,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
     global action_number
     global white_character_old
     global update_time
+    global has_captured_select_scene
     if phase == 0 or phase == 1:
         img = recog.trim(
             img,
@@ -185,6 +186,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
                 ),
                 img,
             )
+            logger_stream.debug("対戦相手情報を保存します。")
             action_number += 1
             row_number = vs_id + 1
             is_character, white_character_old = detect_character(
@@ -272,6 +274,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             cell_list = spreadsheet.set_values_on_range(cell_list, [now])
             spreadsheet.write_values(cell_list)
             logger_stream.debug("対戦開始日時をスプレッドシートに書き込みました。")
+            has_captured_select_scene = True
             return 5
         return phase
     elif phase == 5:
@@ -292,6 +295,24 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             )
             white_character_old = white_character.copy()
             action_number += 1
+            has_captured_select_scene = False
+        elif not (has_captured_select_scene):
+            img_battling = recog.trim(
+                img,
+                TRIM_PLACE[3]["x"],
+                TRIM_PLACE[3]["dx"],
+                TRIM_PLACE[3]["y"],
+                TRIM_PLACE[3]["dy"],
+            )
+            if recog.is_matched(img_battling, IMG_BATTLING, THRESHOLD_BATTLING):
+                cv2.imwrite(
+                    "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
+                        os.getcwd(), vs_id, action_number
+                    ),
+                    img,
+                )
+                action_number += 1
+                has_captured_select_scene = True
         else:
             img_win_lose = recog.trim(
                 img,
