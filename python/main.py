@@ -87,6 +87,7 @@ THRESHOLD_ACTION = float(config["threshold"]["action"])
 PORT = int(config["obs"]["port"])
 PASSWORD = config["obs"]["pass"]
 SOURCE = config["obs"]["source"]
+TIME_SOURCE = config["obs"]["time_source"]
 
 IMG_MATCHING = cv2.imread("./pokemon_sv_vs_support/python/asset/temp_png/matching.png")
 IMG_FOUND_ENEMY = cv2.imread(
@@ -155,6 +156,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
     global white_character_old
     global update_time
     global has_captured_select_scene
+    global end_time
     if phase == 0 or phase == 1:
         img = recog.trim(
             img,
@@ -268,6 +270,7 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             # 時間測定開始する。
             logger_stream.debug("対戦を開始しました。")
             now = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+            end_time = datetime.datetime.now() + datetime.timedelta(minutes=20)
             cell_list = spreadsheet.set_range(
                 row_number, VS_TIMESTAMP_COLUMN, row_number, VS_TIMESTAMP_COLUMN
             )
@@ -296,24 +299,24 @@ def update_phase(img: np.ndarray, phase: int, spreadsheet: SpreadSheet) -> int:
             white_character_old = white_character.copy()
             action_number += 1
             has_captured_select_scene = False
-        elif not (has_captured_select_scene):
-            img_battling = recog.trim(
-                img,
-                TRIM_PLACE[3]["x"],
-                TRIM_PLACE[3]["dx"],
-                TRIM_PLACE[3]["y"],
-                TRIM_PLACE[3]["dy"],
-            )
-            if recog.is_matched(img_battling, IMG_BATTLING, THRESHOLD_BATTLING):
-                cv2.imwrite(
-                    "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
-                        os.getcwd(), vs_id, action_number
-                    ),
-                    img,
-                )
-                action_number += 1
-                has_captured_select_scene = True
         else:
+            if not (has_captured_select_scene):
+                img_battling = recog.trim(
+                    img,
+                    TRIM_PLACE[3]["x"],
+                    TRIM_PLACE[3]["dx"],
+                    TRIM_PLACE[3]["y"],
+                    TRIM_PLACE[3]["dy"],
+                )
+                if recog.is_matched(img_battling, IMG_BATTLING, THRESHOLD_BATTLING):
+                    cv2.imwrite(
+                        "{}/pokemon_sv_vs_support/actions_png/{}_{}.png".format(
+                            os.getcwd(), vs_id, action_number
+                        ),
+                        img,
+                    )
+                    action_number += 1
+                    has_captured_select_scene = True
             img_win_lose = recog.trim(
                 img,
                 TRIM_PLACE[4]["x"],
@@ -367,17 +370,13 @@ def find_most_similar_pokemon(img: np.ndarray) -> tuple[str, float]:
 
     for file_path in POKE_PING_FILES:  # 全ポケモン画像に対してテンプレートマッチングを実行
         temp_origin = cv2.imread(file_path)
-        for raito in [36, 37, 38, 46, 47, 48, 56, 57, 58]:
-            # 可能性がある縮小率を総当たり。【今後修正】縮小率が明らかになったらロジック変更する
-            raito /= 100
-            temp = recog.resize(temp_origin, raito)
-            try:  # 【今後修正】画像サイズエラーが出る場合があったので強引に処理。
-                similarity = recog.find_max_similarity(img, temp)
-            except:
-                break
-            if similarity > max_similarity:
-                max_similarity = similarity
-                img_name, ext = os.path.splitext(os.path.basename(file_path))
+        try:  # 【今後修正】画像サイズエラーが出る場合があったので強引に処理。
+            similarity = recog.find_max_similarity(img, temp_origin)
+        except:
+            break
+        if similarity > max_similarity:
+            max_similarity = similarity
+            img_name, ext = os.path.splitext(os.path.basename(file_path))
     poke_name = ID[ID["img_name"] == img_name]["name"].values[0]
 
     return poke_name, max_similarity
@@ -458,6 +457,14 @@ def main():
 
         img = cv2.imread(img_path)
         phase = update_phase(img, phase, spreadsheet)
+        if phase == 5:
+            tod_time = end_time - datetime.datetime.now()
+            if tod_time.seconds > 1200:
+                ws.set_string(TIME_SOURCE, "試合終了")
+            ws.set_string(
+                TIME_SOURCE,
+                "{}:{}".format(tod_time.seconds // 60, tod_time.seconds % 60),
+            )
 
 
 if __name__ == "__main__":
